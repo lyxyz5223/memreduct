@@ -1,3 +1,6 @@
+<h1 align="center">本仓库基于原Mem Reduct的最新发行版本(v3.4)，修复了托盘鼠标中键判断失效的Bug，但是会造成软件阻塞时的鼠标卡顿，介意勿用</h1>
+<h2 align="center">联系方式：邮箱：lyxyz5223@qq.com</h2>
+
 <h1 align="center">Mem Reduct</h1>
 
 <p align="center">
