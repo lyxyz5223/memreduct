@@ -680,7 +680,20 @@ VOID CALLBACK _app_timercallback (
 		if ((_r_config_getboolean (L"AutoreductEnable", FALSE) && mem_info.physical_memory.percent >= _app_getlimitvalue ()) ||
 			(_r_config_getboolean (L"AutoreductIntervalEnable", FALSE) && (_r_unixtime_now () - _r_config_getlong64 (L"StatisticLastReduct", 0)) >= ((LONG64)_app_getintervalvalue () * 60)))
 		{
+			if (AlreadyHook)
+			{
+				if (UnhookWindowsHookEx (hhook))
+					AlreadyHook = FALSE;
+			}
 			_app_memoryclean (SOURCE_AUTO, 0);
+			if (!AlreadyHook)
+			{
+				hhook = SetWindowsHookEx (WH_MOUSE_LL, HookProc, 0, 0);
+				if (hhook)
+					AlreadyHook = TRUE;
+				else
+					MessageBox (0, L"错误，无法安装低级鼠标钩子，无法获取托盘鼠标中键点击事件，因此软件的行为可能不正确，请注意！\n软件将继续运行", L"错误", MB_ICONERROR);
+			}
 		}
 	}
 
@@ -1926,8 +1939,22 @@ INT_PTR CALLBACK DlgProc (
 		case WM_HOTKEY:
 		{
 			if (wparam == UID)
+			{
+				if (AlreadyHook)
+				{
+					if (UnhookWindowsHookEx (hhook))
+						AlreadyHook = FALSE;
+				}
 				_app_memoryclean (SOURCE_HOTKEY, 0);
-
+				if (!AlreadyHook)
+				{
+					hhook = SetWindowsHookEx (WH_MOUSE_LL, HookProc, 0, 0);
+					if (hhook)
+						AlreadyHook = TRUE;
+					else
+						MessageBox (0, L"错误，无法安装低级鼠标钩子，无法获取托盘鼠标中键点击事件，因此软件的行为可能不正确，请注意！\n软件将继续运行", L"错误", MB_ICONERROR);
+				}
+			}
 			break;
 		}
 
@@ -2089,7 +2116,20 @@ INT_PTR CALLBACK DlgProc (
 					{
 						case 1:
 						{
+							if(AlreadyHook)
+							{
+								if(UnhookWindowsHookEx (hhook))
+									AlreadyHook = FALSE;
+							}
 							_app_memoryclean (SOURCE_TRAY, 0);
+							if (!AlreadyHook)
+							{
+								hhook = SetWindowsHookEx (WH_MOUSE_LL, HookProc, 0, 0);
+								if (hhook)
+									AlreadyHook = TRUE;
+								else
+									MessageBox (0, L"错误，无法安装低级鼠标钩子，无法获取托盘鼠标中键点击事件，因此软件的行为可能不正确，请注意！\n软件将继续运行", L"错误", MB_ICONERROR);
+							}
 							break;
 						}
 
@@ -2472,9 +2512,20 @@ INT_PTR CALLBACK DlgProc (
 						default:
 							return FALSE;
 					}
-
+					if (AlreadyHook)
+					{
+						if (UnhookWindowsHookEx (hhook))
+							AlreadyHook = FALSE;
+					}
 					_app_memoryclean (SOURCE_CMDLINE, mask);
-
+					if (!AlreadyHook)
+					{
+						hhook = SetWindowsHookEx (WH_MOUSE_LL, HookProc, 0, 0);
+						if (hhook)
+							AlreadyHook = TRUE;
+						else
+							MessageBox (0, L"错误，无法安装低级鼠标钩子，无法获取托盘鼠标中键点击事件，因此软件的行为可能不正确，请注意！\n软件将继续运行", L"错误", MB_ICONERROR);
+					}
 					break;
 				}
 
@@ -2539,7 +2590,20 @@ INT_PTR CALLBACK DlgProc (
 						}
 						else
 						{
+							if (AlreadyHook)
+							{
+								if (UnhookWindowsHookEx (hhook))
+									AlreadyHook = FALSE;
+							}
 							_app_memoryclean (SOURCE_MANUAL, 0);
+							if (!AlreadyHook)
+							{
+								hhook = SetWindowsHookEx (WH_MOUSE_LL, HookProc, 0, 0);
+								if (hhook)
+									AlreadyHook = TRUE;
+								else
+									MessageBox (0, L"错误，无法安装低级鼠标钩子，无法获取托盘鼠标中键点击事件，因此软件的行为可能不正确，请注意！\n软件将继续运行", L"错误", MB_ICONERROR);
+							}
 						}
 
 						is_opened = FALSE;
@@ -2598,9 +2662,20 @@ BOOLEAN _app_parseargs (
 		//	mask = REDUCT_MASK_DEFAULT;
 
 		_app_initialize (NULL);
-
+		if (AlreadyHook)
+		{
+			if (UnhookWindowsHookEx (hhook))
+				AlreadyHook = FALSE;
+		}
 		_app_memoryclean (SOURCE_CMDLINE, mask);
-
+		if (!AlreadyHook)
+		{
+			hhook = SetWindowsHookEx (WH_MOUSE_LL, HookProc, 0, 0);
+			if (hhook)
+				AlreadyHook = TRUE;
+			else
+				MessageBox (0, L"错误，无法安装低级鼠标钩子，无法获取托盘鼠标中键点击事件，因此软件的行为可能不正确，请注意！\n软件将继续运行", L"错误", MB_ICONERROR);
+		}
 		return TRUE;
 	}
 	else if (_r_sys_getopt (cmdline, L"help", NULL))
